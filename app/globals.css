@@ -1,0 +1,187 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Tretze Sabors - tokens de diseño
+   Paleta cálida (naranja apetecible) + azul de confianza.
+   ============================================================ */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-on-primary: var(--on-primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-destructive: var(--destructive);
+  --color-destructive-soft: var(--destructive-soft);
+  --color-success: var(--success);
+  --color-ring: var(--ring);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-calistoga), Georgia, "Times New Roman", serif;
+
+  --radius-card: 1rem;
+}
+
+:root {
+  --background: #fff7ed;
+  --foreground: #1c1310;
+  --surface: #ffffff;
+  --muted: #fdf4f0;
+  --muted-foreground: #6b5b54;
+  --border: #f3e2d8;
+  --primary: #c2410c;
+  --primary-hover: #9a3412;
+  --on-primary: #ffffff;
+  --secondary: #f97316;
+  --accent: #1d4ed8;
+  --accent-hover: #1e40af;
+  --destructive: #b91c1c;
+  --destructive-soft: #fef2f2;
+  --success: #15803d;
+  --ring: #c2410c;
+}
+
+.dark {
+  --background: #1c1917;
+  --foreground: #f5f0ec;
+  --surface: #262220;
+  --muted: #2c2725;
+  --muted-foreground: #b5a89f;
+  --border: #3a3330;
+  --primary: #fb923c;
+  --primary-hover: #fdba74;
+  --on-primary: #1c1310;
+  --secondary: #f97316;
+  --accent: #93b4fd;
+  --accent-hover: #bfd3fe;
+  --destructive: #f87171;
+  --destructive-soft: #2a1a1a;
+  --success: #4ade80;
+  --ring: #fb923c;
+}
+
+* {
+  border-color: var(--border);
+}
+
+html {
+  scroll-behavior: smooth;
+  /* Compensa la cabecera fija al saltar a un ancla */
+  scroll-padding-top: 5rem;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+}
+
+/* Foco visible siempre: nunca se elimina sin sustituto (WCAG 2.4.7) */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 0.25rem;
+}
+
+/* ---------- Animaciones ---------- */
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes aparecerSuave {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animar-entrada {
+  animation: aparecer 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animar-suave {
+  animation: aparecerSuave 0.4s ease-out both;
+}
+
+/* Escalona la entrada de listas y rejillas */
+.animar-lista > * {
+  animation: aparecer 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.animar-lista > *:nth-child(1) { animation-delay: 0.02s; }
+.animar-lista > *:nth-child(2) { animation-delay: 0.06s; }
+.animar-lista > *:nth-child(3) { animation-delay: 0.1s; }
+.animar-lista > *:nth-child(4) { animation-delay: 0.14s; }
+.animar-lista > *:nth-child(5) { animation-delay: 0.18s; }
+.animar-lista > *:nth-child(6) { animation-delay: 0.22s; }
+
+/* Respeta la preferencia del sistema de reducir movimiento (WCAG 2.3.3) */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---------- Utilidades ---------- */
+
+/* Fondo cálido de respaldo mientras no hay fotografía real */
+.fondo-calido {
+  background-image:
+    radial-gradient(at 20% 20%, rgba(249, 115, 22, 0.28) 0px, transparent 55%),
+    radial-gradient(at 80% 10%, rgba(217, 119, 6, 0.22) 0px, transparent 50%),
+    radial-gradient(at 65% 85%, rgba(194, 65, 12, 0.25) 0px, transparent 55%),
+    linear-gradient(160deg, #7c2d12 0%, #431407 100%);
+}
+
+.cristal {
+  background: color-mix(in srgb, var(--surface) 78%, transparent);
+  backdrop-filter: blur(14px) saturate(150%);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+}
+
+/* Oculta visualmente pero lo mantiene para lectores de pantalla */
+.solo-lectores {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
