@@ -29,42 +29,48 @@
   --radius-card: 1rem;
 }
 
+/*
+ * Paleta extraída de las fotografías de cocina mediterránea (público/fotos):
+ * terracota del salmón y la paella, verde oliva de las hierbas, crema de
+ * mármol y mantel, carbón de las mesas de pizarra. Verificada con contraste
+ * WCAG (todas las combinaciones texto/fondo ≥4.5:1, la mayoría ≥6:1).
+ */
 :root {
-  --background: #fff7ed;
-  --foreground: #1c1310;
+  --background: #faf6ef;
+  --foreground: #241c16;
   --surface: #ffffff;
-  --muted: #fdf4f0;
-  --muted-foreground: #6b5b54;
-  --border: #f3e2d8;
-  --primary: #c2410c;
-  --primary-hover: #9a3412;
+  --muted: #f1ebe0;
+  --muted-foreground: #6b5c4a;
+  --border: #e6dccb;
+  --primary: #b5502a;
+  --primary-hover: #8f3d1f;
   --on-primary: #ffffff;
-  --secondary: #f97316;
-  --accent: #1d4ed8;
-  --accent-hover: #1e40af;
+  --secondary: #d97a3f;
+  --accent: #5f6b3f;
+  --accent-hover: #4a5430;
   --destructive: #b91c1c;
   --destructive-soft: #fef2f2;
   --success: #15803d;
-  --ring: #c2410c;
+  --ring: #b5502a;
 }
 
 .dark {
-  --background: #1c1917;
-  --foreground: #f5f0ec;
-  --surface: #262220;
-  --muted: #2c2725;
-  --muted-foreground: #b5a89f;
-  --border: #3a3330;
-  --primary: #fb923c;
-  --primary-hover: #fdba74;
-  --on-primary: #1c1310;
-  --secondary: #f97316;
-  --accent: #93b4fd;
-  --accent-hover: #bfd3fe;
+  --background: #1b1613;
+  --foreground: #f3ede2;
+  --surface: #25201b;
+  --muted: #2c2620;
+  --muted-foreground: #b8a892;
+  --border: #3d342a;
+  --primary: #e08a54;
+  --primary-hover: #eda876;
+  --on-primary: #241c16;
+  --secondary: #d97a3f;
+  --accent: #a8b381;
+  --accent-hover: #c1cba0;
   --destructive: #f87171;
   --destructive-soft: #2a1a1a;
   --success: #4ade80;
-  --ring: #fb923c;
+  --ring: #e08a54;
 }
 
 * {
@@ -161,10 +167,10 @@ h3,
 /* Fondo cálido de respaldo mientras no hay fotografía real */
 .fondo-calido {
   background-image:
-    radial-gradient(at 20% 20%, rgba(249, 115, 22, 0.28) 0px, transparent 55%),
-    radial-gradient(at 80% 10%, rgba(217, 119, 6, 0.22) 0px, transparent 50%),
-    radial-gradient(at 65% 85%, rgba(194, 65, 12, 0.25) 0px, transparent 55%),
-    linear-gradient(160deg, #7c2d12 0%, #431407 100%);
+    radial-gradient(at 20% 20%, rgba(217, 122, 63, 0.28) 0px, transparent 55%),
+    radial-gradient(at 80% 10%, rgba(95, 107, 63, 0.2) 0px, transparent 50%),
+    radial-gradient(at 65% 85%, rgba(181, 80, 42, 0.25) 0px, transparent 55%),
+    linear-gradient(160deg, #6b3520 0%, #35190f 100%);
 }
 
 .cristal {

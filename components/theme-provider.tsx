@@ -2,6 +2,7 @@
 
 import { ThemeProvider as NextThemesProvider } from "next-themes"
 import { Moon, Sun } from "lucide-react"
+import { useSyncExternalStore } from "react"
 import { useTheme } from "next-themes"
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
@@ -17,17 +18,38 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   )
 }
 
+const suscribirseNulo = () => () => {}
+
+/**
+ * True solo tras la hidratación en el cliente.
+ *
+ * El servidor no puede saber el tema real (depende de localStorage), así que
+ * su snapshot es siempre `false`; el del cliente es siempre `true`. Usar
+ * useSyncExternalStore en vez de useState+useEffect evita el patrón que
+ * dispara "setState en efecto" y dejar pasar un frame con el HTML del
+ * servidor y el del cliente en desacuerdo (el error de hidratación real que
+ * producía el flicker del icono).
+ */
+function useMontadoEnCliente() {
+  return useSyncExternalStore(
+    suscribirseNulo,
+    () => true,
+    () => false,
+  )
+}
+
 /**
  * Conmutador claro/oscuro.
  *
- * `resolvedTheme` es undefined hasta que next-themes monta en el cliente y lee
- * el tema real, así que mientras tanto se pinta un hueco del mismo tamaño:
- * evita el salto de layout y que se muestre el icono equivocado un instante.
+ * Hasta que se confirma el montaje en cliente no se conoce el tema real, así
+ * que se pinta un hueco del mismo tamaño: evita el salto de layout y que se
+ * muestre el icono equivocado durante un instante.
  */
 export function ThemeToggle() {
+  const montado = useMontadoEnCliente()
   const { resolvedTheme, setTheme } = useTheme()
 
-  if (!resolvedTheme) {
+  if (!montado) {
     return <div className="w-11 h-11" aria-hidden="true" />
   }
 
