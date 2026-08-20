@@ -36,13 +36,21 @@ export type FotoCollage = {
   acento?: "primary" | "accent"
 }
 
+/**
+ * Tamaño uniforme para el estado "orden": el mayor ancho que permite que las
+ * 3 fotos de la fila superior quepan en el contenedor con gaps iguales
+ * (31% × 3 + 3.5% × 2 = 100%). La fila inferior reutiliza el mismo ancho y
+ * centra sus 2 fotos bajo el hueco que deja la fila de 3.
+ */
+const ANCHO_ORDEN = "31%"
+
 export const FOTOS_HERO: FotoCollage[] = [
   {
     id: "paella",
     src: "/fotos/collage-06-paella.jpg",
     posicionFoco: "50% 40%",
     disperso: { top: "4%", left: "52%", width: "34%", rotate: -6, z: 3 },
-    orden: { top: "6%", left: "60%", width: "38%", rotate: 0, z: 2 },
+    orden: { top: "4%", left: "0%", width: ANCHO_ORDEN, rotate: 0, z: 1 },
     acento: "primary",
   },
   {
@@ -50,21 +58,21 @@ export const FOTOS_HERO: FotoCollage[] = [
     src: "/fotos/collage-03-salmon-verduras.jpg",
     posicionFoco: "50% 45%",
     disperso: { top: "38%", left: "66%", width: "30%", rotate: 5, z: 2 },
-    orden: { top: "6%", left: "0%", width: "54%", rotate: 0, z: 1 },
+    orden: { top: "4%", left: "34.5%", width: ANCHO_ORDEN, rotate: 0, z: 1 },
   },
   {
     id: "ensalada",
     src: "/fotos/collage-04-ensalada.jpg",
     posicionFoco: "45% 40%",
     disperso: { top: "6%", left: "12%", width: "24%", rotate: 8, z: 1 },
-    orden: { top: "56%", left: "60%", width: "18%", rotate: 0, z: 2 },
+    orden: { top: "4%", left: "69%", width: ANCHO_ORDEN, rotate: 0, z: 1 },
   },
   {
     id: "mesa-frutas",
     src: "/fotos/collage-02-mesa-frutas.jpg",
     posicionFoco: "50% 55%",
     disperso: { top: "58%", left: "8%", width: "26%", rotate: -4, z: 2 },
-    orden: { top: "56%", left: "0%", width: "24%", rotate: 0, z: 1 },
+    orden: { top: "54%", left: "17.25%", width: ANCHO_ORDEN, rotate: 0, z: 1 },
     acento: "accent",
   },
   {
@@ -72,7 +80,7 @@ export const FOTOS_HERO: FotoCollage[] = [
     src: "/fotos/collage-05-pescado-mesa.jpg",
     posicionFoco: "50% 45%",
     disperso: { top: "66%", left: "44%", width: "22%", rotate: 7, z: 1 },
-    orden: { top: "56%", left: "80%", width: "20%", rotate: 0, z: 1 },
+    orden: { top: "54%", left: "51.75%", width: ANCHO_ORDEN, rotate: 0, z: 1 },
   },
 ]
 
