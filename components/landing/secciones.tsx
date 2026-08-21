@@ -264,7 +264,8 @@ export function LlamadaFinal({ haySesion }: { haySesion: boolean }) {
               <ButtonLink
                 href={haySesion ? "/panel" : "/registro"}
                 tamano="lg"
-                className="bg-white text-[#7c2d12] hover:bg-white/90"
+                variante="secundario"
+                className="bg-white/10 text-white border-white/25 hover:bg-white/20 backdrop-blur-sm"
               >
                 {haySesion ? "Ir a mi panel" : "Crear cuenta de empresa"}
               </ButtonLink>

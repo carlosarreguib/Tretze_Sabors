@@ -114,7 +114,9 @@ export function BadgeContacto() {
     <div className="fixed bottom-4 inset-x-4 sm:inset-x-auto sm:right-6 sm:bottom-6 z-40 print:hidden">
       <div className="cristal border border-border rounded-2xl shadow-lg p-2 flex items-center gap-2 justify-center sm:justify-start">
         <a
-          href={`tel:${EMPRESA.telefonoLink}`}
+          href={`https://wa.me/${EMPRESA.telefonoWhatsapp}`}
+          target="_blank"
+          rel="noopener noreferrer"
           className="flex items-center gap-2.5 px-3.5 h-11 rounded-xl hover:bg-muted transition-colors duration-200 cursor-pointer"
         >
           <span className="w-8 h-8 rounded-full bg-primary/12 grid place-items-center shrink-0">
