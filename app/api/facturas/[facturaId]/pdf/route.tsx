@@ -17,7 +17,13 @@ export async function GET(
 
   const { factura, perfilCliente } = resultado.datos
 
-  if (!perfilCliente.nif || !perfilCliente.billing_address) {
+  if (
+    !perfilCliente.nif ||
+    !perfilCliente.legal_name ||
+    !perfilCliente.billing_address ||
+    !perfilCliente.billing_postal_code ||
+    !perfilCliente.billing_city
+  ) {
     return new Response("Faltan datos fiscales de la empresa cliente", { status: 400 })
   }
 

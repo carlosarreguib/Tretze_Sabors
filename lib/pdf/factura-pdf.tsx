@@ -81,6 +81,11 @@ export function FacturaPdf({
             </Text>
             <Text style={s.bloqueTexto}>NIF/CIF: {perfilCliente.nif}</Text>
             <Text style={s.bloqueTexto}>{perfilCliente.billing_address}</Text>
+            <Text style={s.bloqueTexto}>
+              {[perfilCliente.billing_postal_code, perfilCliente.billing_city]
+                .filter(Boolean)
+                .join(" ")}
+            </Text>
           </View>
         </View>
 

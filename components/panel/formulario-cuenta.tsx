@@ -117,12 +117,21 @@ export function FormularioFiscal({ perfil }: { perfil: Perfil }) {
     <Card className="p-6">
       <h2 className="font-display text-xl">Datos fiscales</h2>
       <p className="mt-1.5 text-sm text-muted-foreground">
-        Los usamos para emitir vuestra factura mensual. Sin NIF/CIF no podréis
+        Los usamos para emitir vuestra factura mensual. Sin estos datos no podréis
         descargar el PDF.
       </p>
 
       <form action={accion} className="mt-6 space-y-5" noValidate>
         <Mensajes estado={estado} />
+
+        <Field
+          name="legal_name"
+          label="Razón social"
+          autoComplete="organization"
+          defaultValue={perfil.legal_name ?? ""}
+          required
+          error={estado.errores?.legal_name}
+        />
 
         <Field
           name="nif"
@@ -134,23 +143,34 @@ export function FormularioFiscal({ perfil }: { perfil: Perfil }) {
         />
 
         <Field
-          name="legal_name"
-          label="Razón social"
-          autoComplete="organization"
-          defaultValue={perfil.legal_name ?? ""}
-          ayuda="Opcional. Si se deja en blanco, se usa el nombre de la empresa."
-          error={estado.errores?.legal_name}
-        />
-
-        <TextareaField
           name="billing_address"
           label="Dirección de facturación"
-          rows={3}
+          autoComplete="street-address"
           defaultValue={perfil.billing_address ?? ""}
-          placeholder="Calle, número, código postal, población"
+          placeholder="Calle y número"
           required
           error={estado.errores?.billing_address}
         />
+
+        <div className="grid sm:grid-cols-2 gap-5">
+          <Field
+            name="billing_postal_code"
+            label="Código postal"
+            autoComplete="postal-code"
+            inputMode="numeric"
+            defaultValue={perfil.billing_postal_code ?? ""}
+            required
+            error={estado.errores?.billing_postal_code}
+          />
+          <Field
+            name="billing_city"
+            label="Localidad"
+            autoComplete="address-level2"
+            defaultValue={perfil.billing_city ?? ""}
+            required
+            error={estado.errores?.billing_city}
+          />
+        </div>
 
         <div className="pt-1">
           <BotonGuardar>Guardar datos fiscales</BotonGuardar>

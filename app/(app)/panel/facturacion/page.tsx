@@ -30,8 +30,10 @@ export default async function FacturacionPage({
 
   const datosFiscalesCompletos = Boolean(
     perfil!.nif &&
+      perfil!.legal_name &&
       perfil!.billing_address &&
-      (perfil!.legal_name || perfil!.company_name),
+      perfil!.billing_postal_code &&
+      perfil!.billing_city,
   )
 
   return (

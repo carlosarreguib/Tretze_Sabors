@@ -65,6 +65,8 @@ export async function guardarDatosFiscales(
     nif: String(formData.get("nif") ?? "").trim(),
     legal_name: String(formData.get("legal_name") ?? "").trim(),
     billing_address: String(formData.get("billing_address") ?? "").trim(),
+    billing_postal_code: String(formData.get("billing_postal_code") ?? "").trim(),
+    billing_city: String(formData.get("billing_city") ?? "").trim(),
   })
 
   if (!validado.success) {
@@ -76,8 +78,10 @@ export async function guardarDatosFiscales(
     .from("profiles")
     .update({
       nif: validado.data.nif,
-      legal_name: validado.data.legal_name || null,
+      legal_name: validado.data.legal_name,
       billing_address: validado.data.billing_address,
+      billing_postal_code: validado.data.billing_postal_code,
+      billing_city: validado.data.billing_city,
     })
     .eq("id", usuario.id)
 

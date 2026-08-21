@@ -111,11 +111,19 @@ export const platoSchema = z.object({
 
 export const datosFiscalesSchema = z.object({
   nif: z.string().min(3, "Indica un NIF/CIF válido").max(20),
-  legal_name: z.string().max(200, "Nombre demasiado largo").optional(),
+  legal_name: z.string().min(2, "Indica la razón social").max(200, "Nombre demasiado largo"),
   billing_address: z
     .string()
     .min(5, "Indica la dirección de facturación")
     .max(300, "Dirección demasiado larga"),
+  billing_postal_code: z
+    .string()
+    .min(4, "Indica el código postal")
+    .max(10, "Código postal demasiado largo"),
+  billing_city: z
+    .string()
+    .min(2, "Indica la localidad")
+    .max(100, "Localidad demasiado larga"),
 })
 
 export const ajusteFacturaSchema = z.object({

@@ -392,6 +392,8 @@ export type Database = {
       profiles: {
         Row: {
           billing_address: string | null
+          billing_city: string | null
+          billing_postal_code: string | null
           company_name: string
           contact_name: string
           created_at: string
@@ -408,6 +410,8 @@ export type Database = {
         }
         Insert: {
           billing_address?: string | null
+          billing_city?: string | null
+          billing_postal_code?: string | null
           company_name?: string
           contact_name?: string
           created_at?: string
@@ -424,6 +428,8 @@ export type Database = {
         }
         Update: {
           billing_address?: string | null
+          billing_city?: string | null
+          billing_postal_code?: string | null
           company_name?: string
           contact_name?: string
           created_at?: string

@@ -11,18 +11,26 @@ create type public.factura_linea_tipo  as enum ('consumo', 'ajuste');
 --    Se exigen en la aplicacion al generar el PDF, no aqui.
 -- ------------------------------------------------------------
 alter table public.profiles
-  add column nif             text,
-  add column legal_name      text,
-  add column billing_address text;
+  add column nif                  text,
+  add column legal_name           text,
+  add column billing_address      text,
+  add column billing_postal_code  text,
+  add column billing_city         text;
 
 comment on column public.profiles.nif is
   'NIF/CIF de la empresa cliente. Obligatorio para generar factura, no para usar la app.';
 comment on column public.profiles.legal_name is
   'Razon social si difiere de company_name. Si es null, la factura usa company_name.';
+comment on column public.profiles.billing_address is
+  'Direccion de facturacion (calle y numero). Sin CP ni localidad.';
+comment on column public.profiles.billing_postal_code is
+  'Codigo postal de la direccion de facturacion.';
+comment on column public.profiles.billing_city is
+  'Localidad de la direccion de facturacion.';
 
 -- Las columnas nuevas no son escribibles por el cliente hasta concederlo:
 -- 0003_rls.sql revoco "update" generico sobre profiles.
-grant update (nif, legal_name, billing_address) on public.profiles to authenticated;
+grant update (nif, legal_name, billing_address, billing_postal_code, billing_city) on public.profiles to authenticated;
 
 -- ------------------------------------------------------------
 -- 2. Configuracion de IVA. Tabla propia (no app_settings): el trigger
