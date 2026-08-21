@@ -1,23 +1,10 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { createClient, getPerfil } from "@/lib/supabase/server"
+import { createClient, exigirAdmin } from "@/lib/supabase/server"
 import { erroresDeZod, platoSchema } from "@/lib/validation"
 import type { EstadoFormulario } from "@/lib/actions/auth"
 import type { EstadoPedido } from "@/lib/database.types"
-
-/**
- * Comprueba que quien llama es administrador.
- *
- * Las políticas RLS ya bloquean cualquier escritura de un cliente; esta
- * comprobación sirve para devolver un mensaje claro en lugar de un error
- * genérico de permisos.
- */
-async function exigirAdmin() {
-  const perfil = await getPerfil()
-  if (!perfil || perfil.role !== "admin") return null
-  return perfil
-}
 
 const SIN_PERMISO: EstadoFormulario = {
   mensaje: "No tienes permisos para realizar esta acción.",

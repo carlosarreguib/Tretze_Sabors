@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache"
 import { createClient, getUsuario } from "@/lib/supabase/server"
-import { erroresDeZod, perfilSchema } from "@/lib/validation"
+import { datosFiscalesSchema, erroresDeZod, perfilSchema } from "@/lib/validation"
 import type { EstadoFormulario } from "@/lib/actions/auth"
 
 export async function guardarPerfil(
@@ -50,4 +50,42 @@ export async function guardarPerfil(
   revalidatePath("/panel", "layout")
 
   return { ok: true, mensaje: "Datos actualizados correctamente." }
+}
+
+export async function guardarDatosFiscales(
+  _previo: EstadoFormulario,
+  formData: FormData,
+): Promise<EstadoFormulario> {
+  const usuario = await getUsuario()
+  if (!usuario) {
+    return { mensaje: "Tu sesión ha caducado. Vuelve a acceder." }
+  }
+
+  const validado = datosFiscalesSchema.safeParse({
+    nif: String(formData.get("nif") ?? "").trim(),
+    legal_name: String(formData.get("legal_name") ?? "").trim(),
+    billing_address: String(formData.get("billing_address") ?? "").trim(),
+  })
+
+  if (!validado.success) {
+    return { errores: erroresDeZod(validado.error) }
+  }
+
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from("profiles")
+    .update({
+      nif: validado.data.nif,
+      legal_name: validado.data.legal_name || null,
+      billing_address: validado.data.billing_address,
+    })
+    .eq("id", usuario.id)
+
+  if (error) {
+    return { mensaje: "No hemos podido guardar los datos fiscales. Inténtalo de nuevo." }
+  }
+
+  revalidatePath("/panel", "layout")
+
+  return { ok: true, mensaje: "Datos fiscales actualizados correctamente." }
 }

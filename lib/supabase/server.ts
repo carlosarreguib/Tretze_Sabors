@@ -67,3 +67,16 @@ export async function getPerfil() {
 
   return data
 }
+
+/**
+ * Perfil del usuario si es administrador, o null en caso contrario.
+ *
+ * Las politicas RLS ya bloquean cualquier escritura de un cliente; esta
+ * comprobacion sirve para devolver un mensaje claro en lugar de un error
+ * generico de permisos, y es el unico punto donde se comprueba `role`.
+ */
+export async function exigirAdmin() {
+  const perfil = await getPerfil()
+  if (!perfil || perfil.role !== "admin") return null
+  return perfil
+}

@@ -75,7 +75,7 @@ export const perfilSchema = z.object({
   payment_notes: z.string().max(500, "Nota demasiado larga").optional(),
 })
 
-const fechaISO = z
+export const fechaISO = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}$/, "Fecha no válida")
 
@@ -107,6 +107,34 @@ export const platoSchema = z.object({
     .max(10000, "Precio fuera de rango"),
   alergenos: z.array(z.string()).default([]),
   is_active: z.boolean().default(true),
+})
+
+export const datosFiscalesSchema = z.object({
+  nif: z.string().min(3, "Indica un NIF/CIF válido").max(20),
+  legal_name: z.string().max(200, "Nombre demasiado largo").optional(),
+  billing_address: z
+    .string()
+    .min(5, "Indica la dirección de facturación")
+    .max(300, "Dirección demasiado larga"),
+})
+
+export const ajusteFacturaSchema = z.object({
+  fecha: fechaISO,
+  descripcion: z.string().min(2, "Indica una descripción").max(200),
+  categoria: z.enum(["primer", "segundo", "postre", "bebida"]).optional(),
+  quantity: z
+    .number()
+    .int("La cantidad debe ser un número entero")
+    .min(1, "La cantidad mínima es 1")
+    .max(500, "La cantidad máxima es 500"),
+  precio_euros: z
+    .number()
+    .min(-10000, "Fuera de rango")
+    .max(10000, "Fuera de rango")
+    // Se valida sobre el valor redondeado a centimos (el mismo redondeo que
+    // aplica lib/actions/facturacion.ts al guardar): un importe como 0.004
+    // no es 0 en euros, pero Math.round(0.004 * 100) si lo es en centimos.
+    .refine((v) => Math.round(v * 100) !== 0, "El importe no puede ser cero"),
 })
 
 /** Convierte los errores de Zod en un mapa campo -> mensaje. */

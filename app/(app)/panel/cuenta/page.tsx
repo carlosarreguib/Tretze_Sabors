@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import {
   FormularioCuenta,
+  FormularioFiscal,
   FormularioPassword,
 } from "@/components/panel/formulario-cuenta"
 import { getPerfil, getUsuario } from "@/lib/supabase/server"
@@ -21,6 +22,7 @@ export default async function CuentaPage() {
 
       <div className="space-y-6">
         <FormularioCuenta perfil={perfil!} email={usuario?.email ?? ""} />
+        <FormularioFiscal perfil={perfil!} />
         <FormularioPassword />
       </div>
     </div>

@@ -142,3 +142,34 @@ export function nombreDia(fecha: string): string {
 export function esPasado(fecha: string): boolean {
   return fecha < aFechaISO(new Date())
 }
+
+/** Primer dia del mes que contiene `fecha`. */
+export function primerDiaDelMes(fecha: Date = new Date()): Date {
+  return new Date(fecha.getFullYear(), fecha.getMonth(), 1)
+}
+
+/** Suma (o resta) meses a una fecha, anclada al dia 1 para evitar desbordar a otro mes. */
+export function sumarMeses(fecha: Date, meses: number): Date {
+  return new Date(fecha.getFullYear(), fecha.getMonth() + meses, 1)
+}
+
+/** Rango legible de un mes: 'Agosto 2026'. */
+export function rangoMes(fecha: Date): string {
+  const texto = new Intl.DateTimeFormat("es-ES", {
+    month: "long",
+    year: "numeric",
+  }).format(fecha)
+  return texto.charAt(0).toUpperCase() + texto.slice(1)
+}
+
+/** Año y mes en formato numerico (mes 1-12), para pasar a queries y a la RPC de cierre. */
+export function anioMes(fecha: Date): { anio: number; mes: number } {
+  return { anio: fecha.getFullYear(), mes: fecha.getMonth() + 1 }
+}
+
+/** Primer y ultimo dia ('YYYY-MM-DD') del mes que contiene `fecha`. */
+export function limitesDelMes(fecha: Date): { desde: string; hasta: string } {
+  const desde = primerDiaDelMes(fecha)
+  const hasta = new Date(fecha.getFullYear(), fecha.getMonth() + 1, 0)
+  return { desde: aFechaISO(desde), hasta: aFechaISO(hasta) }
+}

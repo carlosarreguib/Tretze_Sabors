@@ -1,55 +1,15 @@
 "use client"
 
 import { useActionState } from "react"
-import { useFormStatus } from "react-dom"
-import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import { Field, SelectField, TextareaField } from "@/components/ui/field"
-import { Aviso, Card } from "@/components/ui/misc"
-import { guardarPerfil } from "@/lib/actions/perfil"
+import { Card } from "@/components/ui/misc"
+import { BotonGuardar, Mensajes } from "@/components/ui/formulario"
+import { guardarDatosFiscales, guardarPerfil } from "@/lib/actions/perfil"
 import { cambiarPassword, type EstadoFormulario } from "@/lib/actions/auth"
 import { METODOS_PAGO } from "@/lib/constants"
 import type { Perfil } from "@/lib/database.types"
 
 const ESTADO_INICIAL: EstadoFormulario = {}
-
-function BotonGuardar({ children }: { children: string }) {
-  const { pending } = useFormStatus()
-  return (
-    <Button type="submit" disabled={pending}>
-      {pending ? (
-        <>
-          <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
-          Guardando…
-        </>
-      ) : (
-        children
-      )}
-    </Button>
-  )
-}
-
-function Mensajes({ estado }: { estado: EstadoFormulario }) {
-  if (estado.ok && estado.mensaje) {
-    return (
-      <Aviso tono="exito">
-        <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" aria-hidden="true" />
-        <span>{estado.mensaje}</span>
-      </Aviso>
-    )
-  }
-
-  if (estado.mensaje) {
-    return (
-      <Aviso tono="error">
-        <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" aria-hidden="true" />
-        <span>{estado.mensaje}</span>
-      </Aviso>
-    )
-  }
-
-  return null
-}
 
 export function FormularioCuenta({
   perfil,
@@ -144,6 +104,56 @@ export function FormularioCuenta({
 
         <div className="pt-1">
           <BotonGuardar>Guardar cambios</BotonGuardar>
+        </div>
+      </form>
+    </Card>
+  )
+}
+
+export function FormularioFiscal({ perfil }: { perfil: Perfil }) {
+  const [estado, accion] = useActionState(guardarDatosFiscales, ESTADO_INICIAL)
+
+  return (
+    <Card className="p-6">
+      <h2 className="font-display text-xl">Datos fiscales</h2>
+      <p className="mt-1.5 text-sm text-muted-foreground">
+        Los usamos para emitir vuestra factura mensual. Sin NIF/CIF no podréis
+        descargar el PDF.
+      </p>
+
+      <form action={accion} className="mt-6 space-y-5" noValidate>
+        <Mensajes estado={estado} />
+
+        <Field
+          name="nif"
+          label="NIF / CIF"
+          autoComplete="off"
+          defaultValue={perfil.nif ?? ""}
+          required
+          error={estado.errores?.nif}
+        />
+
+        <Field
+          name="legal_name"
+          label="Razón social"
+          autoComplete="organization"
+          defaultValue={perfil.legal_name ?? ""}
+          ayuda="Opcional. Si se deja en blanco, se usa el nombre de la empresa."
+          error={estado.errores?.legal_name}
+        />
+
+        <TextareaField
+          name="billing_address"
+          label="Dirección de facturación"
+          rows={3}
+          defaultValue={perfil.billing_address ?? ""}
+          placeholder="Calle, número, código postal, población"
+          required
+          error={estado.errores?.billing_address}
+        />
+
+        <div className="pt-1">
+          <BotonGuardar>Guardar datos fiscales</BotonGuardar>
         </div>
       </form>
     </Card>

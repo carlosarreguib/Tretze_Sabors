@@ -9,6 +9,7 @@ import {
   LayoutGrid,
   LogOut,
   Menu,
+  Receipt,
   Settings,
   ShieldCheck,
   UtensilsCrossed,
@@ -21,6 +22,7 @@ import { cn } from "@/lib/utils"
 const NAV_CLIENTE = [
   { href: "/panel", texto: "Pedido semanal", icono: CalendarDays },
   { href: "/panel/pedidos", texto: "Mis pedidos", icono: ClipboardList },
+  { href: "/panel/facturacion", texto: "Facturación", icono: Receipt },
   { href: "/panel/cuenta", texto: "Mi cuenta", icono: Settings },
 ]
 
@@ -28,6 +30,7 @@ const NAV_ADMIN = [
   { href: "/admin/pedidos", texto: "Pedidos", icono: ClipboardList },
   { href: "/admin/menus", texto: "Menús", icono: LayoutGrid },
   { href: "/admin/platos", texto: "Platos", icono: UtensilsCrossed },
+  { href: "/admin/facturas", texto: "Facturación", icono: Receipt },
 ]
 
 export function PanelShell({

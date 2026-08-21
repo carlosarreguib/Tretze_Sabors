@@ -18,6 +18,157 @@ export type Database = {
         Update: { key?: string; updated_at?: string; value?: Json }
         Relationships: []
       }
+      facturacion_config: {
+        Row: { id: number; iva_rate_bps: number }
+        Insert: { id?: number; iva_rate_bps?: number }
+        Update: { id?: number; iva_rate_bps?: number }
+        Relationships: []
+      }
+      factura_lineas: {
+        Row: {
+          categoria: Database["public"]["Enums"]["plato_categoria"] | null
+          created_at: string
+          created_by: string | null
+          descripcion: string
+          factura_id: string
+          fecha: string
+          id: string
+          pedido_id: string | null
+          pedido_item_id: string | null
+          price_cents: number
+          quantity: number
+          subtotal_cents: number
+          tipo: Database["public"]["Enums"]["factura_linea_tipo"]
+        }
+        Insert: {
+          categoria?: Database["public"]["Enums"]["plato_categoria"] | null
+          created_at?: string
+          created_by?: string | null
+          descripcion: string
+          factura_id: string
+          fecha: string
+          id?: string
+          pedido_id?: string | null
+          pedido_item_id?: string | null
+          price_cents: number
+          quantity?: number
+          subtotal_cents: number
+          tipo: Database["public"]["Enums"]["factura_linea_tipo"]
+        }
+        Update: {
+          categoria?: Database["public"]["Enums"]["plato_categoria"] | null
+          created_at?: string
+          created_by?: string | null
+          descripcion?: string
+          factura_id?: string
+          fecha?: string
+          id?: string
+          pedido_id?: string | null
+          pedido_item_id?: string | null
+          price_cents?: number
+          quantity?: number
+          subtotal_cents?: number
+          tipo?: Database["public"]["Enums"]["factura_linea_tipo"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "factura_lineas_factura_id_fkey"
+            columns: ["factura_id"]
+            isOneToOne: false
+            referencedRelation: "facturas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "factura_lineas_pedido_id_fkey"
+            columns: ["pedido_id"]
+            isOneToOne: false
+            referencedRelation: "pedidos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "factura_lineas_pedido_item_id_fkey"
+            columns: ["pedido_item_id"]
+            isOneToOne: false
+            referencedRelation: "pedido_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      facturas: {
+        Row: {
+          anio: number
+          base_cents: number
+          created_at: string
+          factura_rectifica_id: string | null
+          fecha_cierre: string | null
+          fecha_emision: string | null
+          fecha_pago: string | null
+          estado: Database["public"]["Enums"]["factura_estado"]
+          id: string
+          iva_cents: number
+          iva_rate_bps: number | null
+          mes: number
+          notes: string | null
+          numero: string | null
+          profile_id: string
+          total_cents: number
+          updated_at: string
+        }
+        Insert: {
+          anio: number
+          base_cents?: number
+          created_at?: string
+          factura_rectifica_id?: string | null
+          fecha_cierre?: string | null
+          fecha_emision?: string | null
+          fecha_pago?: string | null
+          estado?: Database["public"]["Enums"]["factura_estado"]
+          id?: string
+          iva_cents?: number
+          iva_rate_bps?: number | null
+          mes: number
+          notes?: string | null
+          numero?: string | null
+          profile_id: string
+          total_cents?: number
+          updated_at?: string
+        }
+        Update: {
+          anio?: number
+          base_cents?: number
+          created_at?: string
+          factura_rectifica_id?: string | null
+          fecha_cierre?: string | null
+          fecha_emision?: string | null
+          fecha_pago?: string | null
+          estado?: Database["public"]["Enums"]["factura_estado"]
+          id?: string
+          iva_cents?: number
+          iva_rate_bps?: number | null
+          mes?: number
+          notes?: string | null
+          numero?: string | null
+          profile_id?: string
+          total_cents?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "facturas_factura_rectifica_id_fkey"
+            columns: ["factura_rectifica_id"]
+            isOneToOne: false
+            referencedRelation: "facturas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "facturas_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       menu_items: {
         Row: {
           created_at: string
@@ -240,12 +391,15 @@ export type Database = {
       }
       profiles: {
         Row: {
+          billing_address: string | null
           company_name: string
           contact_name: string
           created_at: string
           delivery_address: string | null
           id: string
           is_active: boolean
+          legal_name: string | null
+          nif: string | null
           payment_method: Database["public"]["Enums"]["metodo_pago"]
           payment_notes: string | null
           phone: string | null
@@ -253,12 +407,15 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          billing_address?: string | null
           company_name?: string
           contact_name?: string
           created_at?: string
           delivery_address?: string | null
           id: string
           is_active?: boolean
+          legal_name?: string | null
+          nif?: string | null
           payment_method?: Database["public"]["Enums"]["metodo_pago"]
           payment_notes?: string | null
           phone?: string | null
@@ -266,12 +423,15 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          billing_address?: string | null
           company_name?: string
           contact_name?: string
           created_at?: string
           delivery_address?: string | null
           id?: string
           is_active?: boolean
+          legal_name?: string | null
+          nif?: string | null
           payment_method?: Database["public"]["Enums"]["metodo_pago"]
           payment_notes?: string | null
           phone?: string | null
@@ -282,15 +442,37 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      v_consumo_mensual: {
+        Row: {
+          anio: number
+          categoria: Database["public"]["Enums"]["plato_categoria"] | null
+          delivery_date: string
+          mes: number
+          nombre_at_order: string | null
+          pedido_id: string | null
+          pedido_item_id: string | null
+          plato_id: string | null
+          price_cents_at_order: number | null
+          profile_id: string | null
+          quantity: number | null
+          subtotal_cents: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
+      cerrar_periodo_factura: {
+        Args: { p_anio: number; p_mes: number; p_profile_id: string }
+        Returns: string
+      }
       cutoff_para: { Args: { p_delivery_date: string }; Returns: string }
       is_admin: { Args: Record<string, never>; Returns: boolean }
       pedido_editable: { Args: { p_delivery_date: string }; Returns: boolean }
     }
     Enums: {
       app_role: "client" | "admin"
+      factura_estado: "borrador" | "cerrada" | "emitida" | "pagada" | "anulada"
+      factura_linea_tipo: "consumo" | "ajuste"
       metodo_pago: "transferencia" | "efectivo" | "domiciliacion"
       pedido_estado: "pendiente" | "confirmado" | "entregado" | "cancelado"
       plato_categoria: "primer" | "segundo" | "postre" | "bebida"
@@ -322,8 +504,14 @@ export type MenuSemanal = Tables<"menus_semanales">
 export type MenuItem = Tables<"menu_items">
 export type Pedido = Tables<"pedidos">
 export type PedidoItem = Tables<"pedido_items">
+export type Factura = Tables<"facturas">
+export type FacturaLinea = Tables<"factura_lineas">
+export type FacturacionConfig = Tables<"facturacion_config">
+export type ConsumoMensual = Database["public"]["Views"]["v_consumo_mensual"]["Row"]
 
 export type Categoria = Enums<"plato_categoria">
 export type EstadoPedido = Enums<"pedido_estado">
 export type MetodoPago = Enums<"metodo_pago">
 export type Rol = Enums<"app_role">
+export type EstadoFactura = Enums<"factura_estado">
+export type TipoLineaFactura = Enums<"factura_linea_tipo">

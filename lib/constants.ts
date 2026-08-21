@@ -1,4 +1,9 @@
-import type { Categoria, EstadoPedido, MetodoPago } from "@/lib/database.types"
+import type {
+  Categoria,
+  EstadoFactura,
+  EstadoPedido,
+  MetodoPago,
+} from "@/lib/database.types"
 
 /** Datos de contacto del negocio. Fuente unica: se usan en hero, footer y soporte. */
 export const EMPRESA = {
@@ -78,6 +83,51 @@ export const METODOS_PAGO: Record<MetodoPago, string> = {
   efectivo: "Efectivo en la entrega",
   domiciliacion: "Domiciliación bancaria",
 }
+
+/**
+ * Estado de facturacion, de cara al cliente. "borrador" se etiqueta como
+ * "Pendiente": es el mismo estado inicial, solo cambia el texto mostrado.
+ */
+export const ESTADOS_FACTURA: Record<
+  EstadoFactura,
+  { etiqueta: string; clase: string }
+> = {
+  borrador: {
+    etiqueta: "Pendiente",
+    clase: "bg-stone-200 text-stone-700 dark:bg-stone-800 dark:text-stone-300",
+  },
+  cerrada: {
+    etiqueta: "Cerrada",
+    clase: "bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-200",
+  },
+  emitida: {
+    etiqueta: "Emitida",
+    clase: "bg-blue-100 text-blue-900 dark:bg-blue-950 dark:text-blue-200",
+  },
+  pagada: {
+    etiqueta: "Pagada",
+    clase: "bg-green-100 text-green-900 dark:bg-green-950 dark:text-green-200",
+  },
+  anulada: {
+    etiqueta: "Anulada",
+    clase: "bg-red-100 text-red-900 dark:bg-red-950 dark:text-red-200",
+  },
+}
+
+export const MESES = [
+  "Enero",
+  "Febrero",
+  "Marzo",
+  "Abril",
+  "Mayo",
+  "Junio",
+  "Julio",
+  "Agosto",
+  "Septiembre",
+  "Octubre",
+  "Noviembre",
+  "Diciembre",
+] as const
 
 /** Alergenos habituales, para el formulario de platos del panel de administracion. */
 export const ALERGENOS = [
