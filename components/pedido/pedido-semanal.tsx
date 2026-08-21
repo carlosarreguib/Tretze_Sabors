@@ -70,8 +70,7 @@ export function PedidoSemanal({
     mensaje: string
   } | null>(null)
 
-  // Estado inicial a partir de los pedidos ya guardados.
-  const [estado, setEstado] = useState<Record<string, EstadoDia>>(() => {
+  function calcularEstadoInicial() {
     const inicial: Record<string, EstadoDia> = {}
     for (const dia of dias) {
       const pedido = pedidos.find((p) => p.delivery_date === dia)
@@ -86,7 +85,24 @@ export function PedidoSemanal({
       }
     }
     return inicial
-  })
+  }
+
+  const [estado, setEstado] = useState(calcularEstadoInicial)
+
+  // `dias`/`pedidos` cambian al navegar entre semanas sin que el componente
+  // se desmonte, así que `diaActivo` y `estado` (ambos con useState
+  // perezoso, que solo corre en el primer montaje) quedarían con datos de la
+  // semana anterior. Se detecta el cambio de semana durante el render y se
+  // resetea el estado ahí mismo, siguiendo el patrón de React para derivar
+  // estado de props sin usar un efecto.
+  const [diasPrevios, setDiasPrevios] = useState(dias)
+  if (dias !== diasPrevios) {
+    setDiasPrevios(dias)
+    setEstado(calcularEstadoInicial())
+    setDiaActivo((prev) =>
+      dias.includes(prev) ? prev : dias.find((d) => editables[d]) ?? dias[0],
+    )
+  }
 
   const platosDelDia = useMemo(() => {
     const mapa = new Map<string, Plato[]>()
