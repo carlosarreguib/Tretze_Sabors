@@ -19,28 +19,35 @@ function traducirErrorBD(mensaje: string): string {
   if (m.includes("transicion de estado no permitida"))
     return "Ese cambio de estado no está permitido desde el estado actual."
   if (m.includes("solo un administrador")) return "No tienes permisos para realizar esta acción."
+  if (m.includes("ya existe")) return mensaje  // "El número de factura 'X' ya existe"
+  if (m.includes("no puede estar vacío")) return mensaje
 
   return "No hemos podido completar la operación. Inténtalo de nuevo."
 }
 
 /**
  * Cierra el periodo de una empresa: materializa el consumo del mes en
- * lineas de factura, asigna numero secuencial y congela el tipo de IVA
- * vigente. Los ajustes ya cargados en borrador se conservan.
+ * lineas de factura, asigna el número indicado (o uno automático si no se
+ * proporciona) y congela el tipo de IVA vigente.
  */
 export async function cerrarPeriodo(
   profileId: string,
   anio: number,
   mes: number,
+  numero: string,
 ): Promise<ResultadoFactura> {
   const perfil = await exigirAdmin()
   if (!perfil) return { ok: false, mensaje: "No tienes permisos para realizar esta acción." }
+
+  const numeroLimpio = numero.trim()
+  if (!numeroLimpio) return { ok: false, mensaje: "Indica el número de factura." }
 
   const supabase = await createClient()
   const { error } = await supabase.rpc("cerrar_periodo_factura", {
     p_profile_id: profileId,
     p_anio: anio,
     p_mes: mes,
+    p_numero: numeroLimpio,
   })
 
   if (error) return { ok: false, mensaje: traducirErrorBD(error.message) }

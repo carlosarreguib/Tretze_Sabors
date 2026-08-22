@@ -19,9 +19,7 @@ import { Aviso, Card } from "@/components/ui/misc"
 import { guardarPedidoDia } from "@/lib/actions/pedidos"
 import {
   CATEGORIAS,
-  FRANJAS,
   ORDEN_CATEGORIAS,
-  type Franja,
 } from "@/lib/constants"
 import {
   nombreDia,
@@ -33,10 +31,9 @@ import type { Categoria, Pedido, PedidoItem, Plato } from "@/lib/database.types"
 type PlatoDelDia = { fecha: string; plato: Plato }
 type PedidoConItems = Pedido & { pedido_items: PedidoItem[] }
 
-/** Estado del formulario de un día: cantidades por plato, franja y notas. */
+/** Estado del formulario de un día: cantidades por plato y notas. */
 type EstadoDia = {
   cantidades: Record<string, number>
-  franja: Franja
   notas: string
 }
 
@@ -79,7 +76,6 @@ export function PedidoSemanal({
       }
       inicial[dia] = {
         cantidades,
-        franja: (pedido?.slot_start?.slice(0, 5) as Franja) ?? "13:00",
         notas: pedido?.notes ?? "",
       }
     }
@@ -169,7 +165,7 @@ export function PedidoSemanal({
 
       const respuesta = await guardarPedidoDia({
         delivery_date: diaActivo,
-        slot_start: actual.franja,
+        slot_start: "13:00",
         notes: actual.notas || undefined,
         items,
       })
@@ -422,39 +418,6 @@ export function PedidoSemanal({
           )}
 
           <div className="mt-5 space-y-4">
-            <div className="space-y-1.5">
-              <label
-                htmlFor="franja"
-                className="block text-sm font-medium"
-              >
-                Hora de entrega
-              </label>
-              <select
-                id="franja"
-                value={actual?.franja ?? "13:00"}
-                disabled={!editable}
-                onChange={(e) =>
-                  setEstado((prev) => ({
-                    ...prev,
-                    [diaActivo]: {
-                      ...prev[diaActivo],
-                      franja: e.target.value as Franja,
-                    },
-                  }))
-                }
-                className="w-full h-11 px-3.5 rounded-xl bg-surface border border-border cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring"
-              >
-                {FRANJAS.map((f) => (
-                  <option key={f} value={f}>
-                    {f} h
-                  </option>
-                ))}
-              </select>
-              <p className="text-xs text-muted-foreground">
-                Repartimos entre las 12:00 y las 16:00.
-              </p>
-            </div>
-
             <div className="space-y-1.5">
               <label htmlFor="notas" className="block text-sm font-medium">
                 Notas para la cocina

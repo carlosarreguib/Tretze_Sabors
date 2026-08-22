@@ -23,7 +23,6 @@ import { cn } from "@/lib/utils"
 const NAV_CLIENTE = [
   { href: "/panel", texto: "Pedido semanal", icono: CalendarDays },
   { href: "/panel/pedidos", texto: "Mis pedidos", icono: ClipboardList },
-  { href: "/panel/facturacion", texto: "Facturación", icono: Receipt },
   { href: "/panel/cuenta", texto: "Mi cuenta", icono: Settings },
 ]
 
