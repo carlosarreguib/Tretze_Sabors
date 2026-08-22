@@ -17,7 +17,7 @@ set search_path = ''
 as $$
 declare
   v_factura_id uuid;
-  v_estado     public.factura_estado;
+  v_estado     text;
   v_iva_rate   integer;
   v_numero     text;
 begin

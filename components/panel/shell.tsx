@@ -13,6 +13,7 @@ import {
   Receipt,
   Settings,
   ShieldCheck,
+  Tag,
   UtensilsCrossed,
   X,
 } from "lucide-react"
@@ -28,6 +29,7 @@ const NAV_CLIENTE = [
 
 const NAV_ADMIN = [
   { href: "/admin/pedidos", texto: "Pedidos", icono: ClipboardList },
+  { href: "/admin/etiquetas", texto: "Etiquetas", icono: Tag },
   { href: "/admin/menus", texto: "Menús", icono: LayoutGrid },
   { href: "/admin/platos", texto: "Platos", icono: UtensilsCrossed },
   { href: "/admin/facturas", texto: "Facturación", icono: Receipt },
