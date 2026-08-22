@@ -11,227 +11,234 @@ export type DatosEtiqueta = {
 }
 
 // ---------------------------------------------------------------------------
-// Estilos
+// A4 = 595 × 842 pt. 6 etiquetas: 3 columnas × 2 filas.
+// Márgenes de página: 18pt. Separación entre celdas: 10pt.
+// Ancho celda: (595 - 2×18 - 2×10) / 3 ≈ 173pt
+// Alto celda:  (842 - 2×18 - 1×10) / 2 ≈ 389pt  → recortamos a 390pt
 // ---------------------------------------------------------------------------
+const PAG_MARGIN = 18
+const GAP = 10
+const CELL_W = (595 - 2 * PAG_MARGIN - 2 * GAP) / 3   // ≈ 173
+const CELL_H = (842 - 2 * PAG_MARGIN - GAP) / 2        // ≈ 398
+
 const s = StyleSheet.create({
   page: {
-    padding: 0,
+    padding: PAG_MARGIN,
     fontFamily: "Helvetica",
     backgroundColor: "#ffffff",
+    flexDirection: "column",
   },
 
-  // Cada etiqueta ocupa la mitad de una página A4 (421pt de alto aprox.)
-  etiqueta: {
-    height: "50%",
-    padding: "28pt 32pt",
-    flexDirection: "column",
-    justifyContent: "space-between",
-    borderBottom: "1pt dashed #ccc",
-  },
-  etiquetaUltima: {
-    height: "50%",
-    padding: "28pt 32pt",
-    flexDirection: "column",
-    justifyContent: "space-between",
-  },
-
-  // Cabecera: logo + fecha
-  cabecera: {
+  // Fila de la página: 3 etiquetas en horizontal
+  fila: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: 14,
+    gap: GAP,
+    height: CELL_H,
   },
+  filaSep: {
+    flexDirection: "row",
+    gap: GAP,
+    height: CELL_H,
+    marginTop: GAP,
+  },
+
+  // Celda de etiqueta con borde punteado (simula línea de corte)
+  etiqueta: {
+    width: CELL_W,
+    height: CELL_H,
+    padding: 10,
+    border: "1pt dashed #ccc",
+    flexDirection: "column",
+    justifyContent: "flex-start",
+  },
+
+  // Logo
   logo: {
-    fontSize: 15,
+    fontSize: 10,
     fontFamily: "Helvetica-Bold",
     color: "#1a1a1a",
-    letterSpacing: 0.5,
+    letterSpacing: 0.3,
   },
   logoAccent: {
-    fontSize: 15,
+    fontSize: 10,
     fontFamily: "Helvetica-Bold",
-    color: "#d97706", // amber-600, tono cálido
+    color: "#d97706",
   },
+
+  // Fecha
   fecha: {
-    fontSize: 9,
-    color: "#666",
-    textAlign: "right",
-    textTransform: "capitalize",
+    fontSize: 7,
+    color: "#888",
+    marginTop: 1,
+    marginBottom: 6,
+  },
+
+  separador: {
+    borderTop: "0.5pt solid #e5e7eb",
+    marginBottom: 5,
   },
 
   // Empresa + persona
   empresa: {
-    fontSize: 13,
+    fontSize: 9,
     fontFamily: "Helvetica-Bold",
     color: "#1a1a1a",
-    marginBottom: 2,
+    marginBottom: 1,
   },
   persona: {
-    fontSize: 11,
-    color: "#444",
-    marginBottom: 14,
+    fontSize: 8,
+    color: "#555",
+    marginBottom: 5,
   },
 
-  // Sección de alergenos
-  seccion: {
-    marginBottom: 10,
-  },
+  // Platos
   seccionTitulo: {
-    fontSize: 7,
-    color: "#999",
+    fontSize: 6,
+    color: "#aaa",
     textTransform: "uppercase",
-    letterSpacing: 0.8,
-    marginBottom: 3,
+    letterSpacing: 0.6,
+    marginBottom: 2,
+    marginTop: 4,
   },
-  alergenosPill: {
+  platoFila: {
+    flexDirection: "row",
+    gap: 3,
+    marginBottom: 1,
+  },
+  platoPunto: {
+    fontSize: 8,
+    color: "#d97706",
+  },
+  platoTexto: {
+    fontSize: 8,
+    color: "#1a1a1a",
+    flex: 1,
+  },
+
+  // Alergenos
+  alergenosWrap: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 4,
+    gap: 3,
+    marginTop: 2,
   },
   pill: {
-    fontSize: 8,
+    fontSize: 6,
     backgroundColor: "#fef3c7",
     color: "#92400e",
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
+    paddingHorizontal: 4,
+    paddingVertical: 1,
+    borderRadius: 3,
     borderWidth: 0.5,
     borderColor: "#fcd34d",
   },
   sinAlergenos: {
-    fontSize: 9,
-    color: "#aaa",
+    fontSize: 7,
+    color: "#bbb",
     fontStyle: "italic",
   },
 
-  // Notas / comentarios
+  // Notas
   notas: {
-    fontSize: 9,
-    color: "#555",
-    lineHeight: 1.4,
-    borderLeft: "2pt solid #d1d5db",
-    paddingLeft: 6,
-  },
-
-  // Platos
-  platosLista: {
-    gap: 3,
-  },
-  platoFila: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 5,
-  },
-  platoPunto: {
-    fontSize: 10,
-    color: "#d97706",
-  },
-  platoTexto: {
-    fontSize: 10,
-    color: "#1a1a1a",
-  },
-
-  // Línea divisoria entre secciones
-  separador: {
-    borderTop: "0.5pt solid #e5e7eb",
-    marginBottom: 8,
+    fontSize: 7,
+    color: "#666",
+    lineHeight: 1.3,
+    borderLeft: "1.5pt solid #d1d5db",
+    paddingLeft: 4,
     marginTop: 2,
   },
 })
 
 // ---------------------------------------------------------------------------
-// Componente etiqueta individual
+// Componente de una etiqueta individual
 // ---------------------------------------------------------------------------
-function Etiqueta({
-  datos,
-  esUltima,
-}: {
-  datos: DatosEtiqueta
-  esUltima: boolean
-}) {
+function Etiqueta({ datos }: { datos: DatosEtiqueta }) {
   return (
-    <View style={esUltima ? s.etiquetaUltima : s.etiqueta}>
-      {/* Cabecera: logo + fecha */}
-      <View style={s.cabecera}>
-        <View>
-          <Text>
-            <Text style={s.logo}>Tretze</Text>
-            <Text style={s.logoAccent}> Sabors</Text>
-          </Text>
-        </View>
-        <Text style={s.fecha}>{datos.fecha}</Text>
-      </View>
+    <View style={s.etiqueta}>
+      {/* Logo */}
+      <Text>
+        <Text style={s.logo}>Tretze</Text>
+        <Text style={s.logoAccent}> Sabors</Text>
+      </Text>
+
+      {/* Fecha */}
+      <Text style={s.fecha}>{datos.fecha}</Text>
+
+      <View style={s.separador} />
 
       {/* Empresa y persona */}
       <Text style={s.empresa}>{datos.empresa}</Text>
       {datos.persona && <Text style={s.persona}>{datos.persona}</Text>}
 
-      <View style={s.separador} />
-
       {/* Platos */}
-      <View style={s.seccion}>
-        <Text style={s.seccionTitulo}>Menú seleccionado</Text>
-        <View style={s.platosLista}>
-          {datos.platos.map((plato, i) => (
-            <View key={i} style={s.platoFila}>
-              <Text style={s.platoPunto}>·</Text>
-              <Text style={s.platoTexto}>{plato}</Text>
-            </View>
-          ))}
+      <Text style={s.seccionTitulo}>Menú</Text>
+      {datos.platos.map((plato, i) => (
+        <View key={i} style={s.platoFila}>
+          <Text style={s.platoPunto}>·</Text>
+          <Text style={s.platoTexto}>{plato}</Text>
         </View>
-      </View>
+      ))}
 
       {/* Alergenos */}
-      <View style={s.seccion}>
-        <Text style={s.seccionTitulo}>Alérgenos</Text>
-        {datos.alergenos.length > 0 ? (
-          <View style={s.alergenosPill}>
-            {datos.alergenos.map((a) => (
-              <Text key={a} style={s.pill}>
-                {a}
-              </Text>
-            ))}
-          </View>
-        ) : (
-          <Text style={s.sinAlergenos}>Sin alergenos indicados</Text>
-        )}
-      </View>
+      <Text style={s.seccionTitulo}>Alérgenos</Text>
+      {datos.alergenos.length > 0 ? (
+        <View style={s.alergenosWrap}>
+          {datos.alergenos.map((a) => (
+            <Text key={a} style={s.pill}>{a}</Text>
+          ))}
+        </View>
+      ) : (
+        <Text style={s.sinAlergenos}>Sin alérgenos</Text>
+      )}
 
-      {/* Notas / comentarios */}
+      {/* Notas */}
       {datos.notas && (
-        <View style={s.seccion}>
+        <>
           <Text style={s.seccionTitulo}>Comentarios</Text>
           <Text style={s.notas}>{datos.notas}</Text>
-        </View>
+        </>
       )}
     </View>
   )
 }
 
 // ---------------------------------------------------------------------------
-// Documento completo: 2 etiquetas por página A4
+// Documento completo: 6 etiquetas por página A4 (3 columnas × 2 filas)
 // ---------------------------------------------------------------------------
 export function EtiquetasPdf({ etiquetas }: { etiquetas: DatosEtiqueta[] }) {
-  // Agrupa de 2 en 2 para llenar páginas A4
+  // Agrupa de 6 en 6
   const paginas: DatosEtiqueta[][] = []
-  for (let i = 0; i < etiquetas.length; i += 2) {
-    paginas.push(etiquetas.slice(i, i + 2))
+  for (let i = 0; i < etiquetas.length; i += 6) {
+    paginas.push(etiquetas.slice(i, i + 6))
   }
 
   return (
     <Document>
-      {paginas.map((par, pi) => (
-        <Page key={pi} size="A4" style={s.page}>
-          {par.map((datos, ei) => (
-            <Etiqueta
-              key={ei}
-              datos={datos}
-              esUltima={ei === par.length - 1}
-            />
-          ))}
-        </Page>
-      ))}
+      {paginas.map((grupo, pi) => {
+        const fila1 = grupo.slice(0, 3)
+        const fila2 = grupo.slice(3, 6)
+        // Rellenar fila2 con espaciadores si hay menos de 6
+        while (fila2.length < 3) fila2.push(null as unknown as DatosEtiqueta)
+
+        return (
+          <Page key={pi} size="A4" style={s.page}>
+            <View style={s.fila}>
+              {fila1.map((datos, ei) => (
+                <Etiqueta key={ei} datos={datos} />
+              ))}
+            </View>
+            <View style={s.filaSep}>
+              {fila2.map((datos, ei) =>
+                datos ? (
+                  <Etiqueta key={ei} datos={datos} />
+                ) : (
+                  <View key={ei} style={{ width: CELL_W }} />
+                )
+              )}
+            </View>
+          </Page>
+        )
+      })}
     </Document>
   )
 }
