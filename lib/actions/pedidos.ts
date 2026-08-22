@@ -1,8 +1,10 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { createClient, getUsuario } from "@/lib/supabase/server"
-import { pedidoDiaSchema } from "@/lib/validation"
+import { z } from "zod"
+import { createClient, exigirAdmin, getUsuario } from "@/lib/supabase/server"
+import { fechaISO, pedidoDiaSchema } from "@/lib/validation"
+import { FRANJAS } from "@/lib/constants"
 
 export type ResultadoPedido = {
   ok: boolean
@@ -131,6 +133,95 @@ export async function guardarPedidoDia(
 
   revalidatePath("/panel")
   revalidatePath("/panel/pedidos")
+
+  return { ok: true, mensaje: "Pedido guardado correctamente." }
+}
+
+const pedidoAdminSchema = z.object({
+  profile_id: z.string().uuid("Empresa no válida"),
+  delivery_date: fechaISO,
+  slot_start: z.enum(FRANJAS),
+  notes: z.string().max(500).optional(),
+  items: z
+    .array(
+      z.object({
+        plato_id: z.string().uuid(),
+        quantity: z.number().int().min(1).max(500),
+      }),
+    )
+    .min(1, "Añade al menos un plato"),
+})
+
+/**
+ * El administrador crea o sustituye el pedido de una empresa para un día
+ * concreto, sin restricción de cutoff (el trigger de la BD ya hace bypass
+ * para is_admin()).
+ */
+export async function crearPedidoAdmin(
+  entrada: unknown,
+): Promise<ResultadoPedido> {
+  await exigirAdmin()
+
+  const validado = pedidoAdminSchema.safeParse(entrada)
+  if (!validado.success) {
+    return {
+      ok: false,
+      mensaje: validado.error.issues[0]?.message ?? "Datos no válidos",
+    }
+  }
+
+  const { profile_id, delivery_date, slot_start, notes, items } = validado.data
+  const supabase = await createClient()
+
+  const { data: existente } = await supabase
+    .from("pedidos")
+    .select("id")
+    .eq("profile_id", profile_id)
+    .eq("delivery_date", delivery_date)
+    .maybeSingle()
+
+  let pedidoId = existente?.id
+
+  if (pedidoId) {
+    const { error } = await supabase
+      .from("pedidos")
+      .update({ slot_start, notes: notes || null })
+      .eq("id", pedidoId)
+    if (error) return { ok: false, mensaje: traducirErrorBD(error.message) }
+
+    await supabase.from("pedido_items").delete().eq("pedido_id", pedidoId)
+  } else {
+    const { data, error } = await supabase
+      .from("pedidos")
+      .insert({
+        profile_id,
+        delivery_date,
+        slot_start,
+        notes: notes || null,
+        estado: "pendiente",
+      })
+      .select("id")
+      .single()
+    if (error) return { ok: false, mensaje: traducirErrorBD(error.message) }
+    pedidoId = data.id
+  }
+
+  const { error: errorItems } = await supabase.from("pedido_items").insert(
+    items.map((i) => ({
+      pedido_id: pedidoId!,
+      plato_id: i.plato_id,
+      quantity: i.quantity,
+      price_cents_at_order: 0,
+      nombre_at_order: "",
+    })),
+  )
+
+  if (errorItems) {
+    if (!existente) await supabase.from("pedidos").delete().eq("id", pedidoId!)
+    return { ok: false, mensaje: traducirErrorBD(errorItems.message) }
+  }
+
+  revalidatePath("/admin/pedidos")
 
   return { ok: true, mensaje: "Pedido guardado correctamente." }
 }

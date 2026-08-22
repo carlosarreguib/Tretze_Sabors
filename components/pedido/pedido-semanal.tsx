@@ -24,7 +24,6 @@ import {
   type Franja,
 } from "@/lib/constants"
 import {
-  formatearPrecio,
   nombreDia,
   parsearFecha,
   rangoSemana,
@@ -142,12 +141,9 @@ export function PedidoSemanal({
         .map((p) => ({
           plato: p,
           cantidad: actual!.cantidades[p.id],
-          subtotal: actual!.cantidades[p.id] * p.price_cents,
         })),
     [platos, actual],
   )
-
-  const total = lineas.reduce((suma, l) => suma + l.subtotal, 0)
 
   function cambiarCantidad(platoId: string, delta: number) {
     setResultado(null)
@@ -336,14 +332,9 @@ export function PedidoSemanal({
                           }
                         >
                           <div className="min-w-0 flex-1">
-                            <div className="flex items-baseline justify-between gap-3">
-                              <h3 className="font-medium leading-snug">
-                                {plato.nombre}
-                              </h3>
-                              <span className="text-sm font-semibold text-primary shrink-0 tabular-nums">
-                                {formatearPrecio(plato.price_cents)}
-                              </span>
-                            </div>
+                            <h3 className="font-medium leading-snug">
+                              {plato.nombre}
+                            </h3>
 
                             {plato.descripcion && (
                               <p className="mt-1 text-sm text-muted-foreground leading-relaxed">
@@ -414,7 +405,7 @@ export function PedidoSemanal({
             </p>
           ) : (
             <ul className="mt-4 space-y-2.5">
-              {lineas.map(({ plato, cantidad, subtotal }) => (
+              {lineas.map(({ plato, cantidad }) => (
                 <li
                   key={plato.id}
                   className="flex justify-between gap-3 text-sm"
@@ -425,20 +416,10 @@ export function PedidoSemanal({
                     </span>
                     {plato.nombre}
                   </span>
-                  <span className="shrink-0 tabular-nums">
-                    {formatearPrecio(subtotal)}
-                  </span>
                 </li>
               ))}
             </ul>
           )}
-
-          <div className="mt-5 pt-4 border-t border-border flex justify-between items-baseline">
-            <span className="text-sm text-muted-foreground">Total</span>
-            <span className="font-display text-2xl tabular-nums">
-              {formatearPrecio(total)}
-            </span>
-          </div>
 
           <div className="mt-5 space-y-4">
             <div className="space-y-1.5">

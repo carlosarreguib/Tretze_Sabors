@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache"
 import { createClient, getUsuario } from "@/lib/supabase/server"
 import { datosFiscalesSchema, erroresDeZod, perfilSchema } from "@/lib/validation"
+import { ALERGENOS } from "@/lib/constants"
 import type { EstadoFormulario } from "@/lib/actions/auth"
 
 export async function guardarPerfil(
@@ -92,4 +93,34 @@ export async function guardarDatosFiscales(
   revalidatePath("/panel", "layout")
 
   return { ok: true, mensaje: "Datos fiscales actualizados correctamente." }
+}
+
+export async function guardarAlergias(
+  _previo: EstadoFormulario,
+  formData: FormData,
+): Promise<EstadoFormulario> {
+  const usuario = await getUsuario()
+  if (!usuario) {
+    return { mensaje: "Tu sesión ha caducado. Vuelve a acceder." }
+  }
+
+  // Los alergenos se envían como checkboxes: solo los marcados llegan en formData.
+  // Filtramos contra la lista canónica para evitar valores arbitrarios.
+  const validos = new Set(ALERGENOS as readonly string[])
+  const alergenos = formData.getAll("alergenos")
+    .map((v) => String(v))
+    .filter((v) => validos.has(v))
+
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from("user_allergies")
+    .upsert({ user_id: usuario.id, alergenos }, { onConflict: "user_id" })
+
+  if (error) {
+    return { mensaje: "No hemos podido guardar las alergias. Inténtalo de nuevo." }
+  }
+
+  revalidatePath("/panel/cuenta")
+
+  return { ok: true, mensaje: "Alergias actualizadas correctamente." }
 }

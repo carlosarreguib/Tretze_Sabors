@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { ClipboardList, Clock, MapPin, Phone, StickyNote } from "lucide-react"
+import { ClipboardList, Clock, Download, MapPin, Phone, Plus, StickyNote } from "lucide-react"
 import { SelectorEstado } from "@/components/admin/estado-pedido"
 import { Card, Vacio } from "@/components/ui/misc"
 import { createClient } from "@/lib/supabase/server"
@@ -72,21 +72,43 @@ export default async function AdminPedidosPage({
         </p>
       </header>
 
-      <div className="flex gap-2 mb-6">
-        {FILTROS.map(({ clave, texto }) => (
+      <div className="flex flex-wrap gap-2 mb-6 items-center justify-between">
+        <div className="flex gap-2">
+          {FILTROS.map(({ clave, texto }) => (
+            <Link
+              key={clave}
+              href={`/admin/pedidos?filtro=${clave}`}
+              className={
+                "px-4 h-10 inline-flex items-center rounded-full text-sm border transition-colors duration-200 cursor-pointer " +
+                (filtro === clave
+                  ? "border-primary bg-primary/12 text-primary font-medium"
+                  : "border-border hover:bg-muted")
+              }
+            >
+              {texto}
+            </Link>
+          ))}
+        </div>
+
+        <div className="flex gap-2">
+          {filtro === "hoy" && (
+            <a
+              href={`/api/pedidos/exportar?fecha=${hoy}`}
+              download
+              className="px-4 h-10 inline-flex items-center gap-2 rounded-full text-sm border border-border hover:bg-muted transition-colors duration-200 cursor-pointer"
+            >
+              <Download className="w-3.5 h-3.5" aria-hidden="true" />
+              Exportar CSV
+            </a>
+          )}
           <Link
-            key={clave}
-            href={`/admin/pedidos?filtro=${clave}`}
-            className={
-              "px-4 h-10 inline-flex items-center rounded-full text-sm border transition-colors duration-200 cursor-pointer " +
-              (filtro === clave
-                ? "border-primary bg-primary/12 text-primary font-medium"
-                : "border-border hover:bg-muted")
-            }
+            href="/admin/pedidos/nuevo"
+            className="px-4 h-10 inline-flex items-center gap-2 rounded-full text-sm bg-primary text-on-primary hover:bg-primary-hover transition-colors duration-200 cursor-pointer"
           >
-            {texto}
+            <Plus className="w-3.5 h-3.5" aria-hidden="true" />
+            Nuevo pedido
           </Link>
-        ))}
+        </div>
       </div>
 
       {(pedidos ?? []).length === 0 ? (

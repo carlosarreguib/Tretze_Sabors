@@ -126,6 +126,35 @@ export const datosFiscalesSchema = z.object({
     .max(100, "Localidad demasiado larga"),
 })
 
+export const empresaSchema = z.object({
+  company_name: z.string().min(2, "Indica el nombre de la empresa").max(120),
+  contact_name: z.string().min(2, "Indica la persona de contacto").max(120),
+  phone: z
+    .string()
+    .min(6, "Indica un teléfono de contacto")
+    .max(30, "Teléfono demasiado largo"),
+  delivery_address: z
+    .string()
+    .min(5, "Indica la dirección de entrega")
+    .max(300, "Dirección demasiado larga"),
+  payment_method: z.enum(["transferencia", "efectivo", "domiciliacion"]),
+  payment_notes: z.string().max(500, "Nota demasiado larga").optional(),
+  // Datos fiscales opcionales al crear (pueden rellenarse después)
+  nif: z.string().max(20).optional(),
+  legal_name: z.string().max(200).optional(),
+  billing_address: z.string().max(300).optional(),
+  billing_postal_code: z.string().max(10).optional(),
+  billing_city: z.string().max(100).optional(),
+})
+
+export const usuarioEmpresaSchema = z.object({
+  first_name: z.string().min(1, "Indica el nombre").max(100),
+  last_name_1: z.string().min(1, "Indica el primer apellido").max(100),
+  last_name_2: z.string().max(100).optional(),
+  email: z.string().email("Introduce un correo válido"),
+  profile_id: z.string().uuid("Empresa no válida"),
+})
+
 export const ajusteFacturaSchema = z.object({
   fecha: fechaISO,
   descripcion: z.string().min(2, "Indica una descripción").max(200),

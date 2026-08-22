@@ -4,6 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
 import {
+  Building2,
   CalendarDays,
   ClipboardList,
   LayoutGrid,
@@ -31,15 +32,18 @@ const NAV_ADMIN = [
   { href: "/admin/menus", texto: "Menús", icono: LayoutGrid },
   { href: "/admin/platos", texto: "Platos", icono: UtensilsCrossed },
   { href: "/admin/facturas", texto: "Facturación", icono: Receipt },
+  { href: "/admin/empresas", texto: "Empresas", icono: Building2 },
 ]
 
 export function PanelShell({
   children,
   empresa,
+  nombreUsuario,
   esAdmin,
 }: {
   children: React.ReactNode
   empresa: string
+  nombreUsuario?: string | null
   esAdmin: boolean
 }) {
   const pathname = usePathname()
@@ -86,8 +90,11 @@ export function PanelShell({
       </Link>
 
       <p className="px-3.5 mt-1 text-xs text-muted-foreground truncate">
-        {empresa || "Tu empresa"}
+        {nombreUsuario ? nombreUsuario : empresa || "Tu empresa"}
       </p>
+      {nombreUsuario && (
+        <p className="px-3.5 text-xs text-muted-foreground/70 truncate">{empresa}</p>
+      )}
 
       <nav className="mt-7 flex-1" aria-label="Navegación del panel">
         <ul className="space-y-1">{enlaces}</ul>

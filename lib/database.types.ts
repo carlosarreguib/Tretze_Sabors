@@ -18,6 +18,118 @@ export type Database = {
         Update: { key?: string; updated_at?: string; value?: Json }
         Relationships: []
       }
+      company_prices: {
+        Row: {
+          notas: string | null
+          precio_medio_menu_cents: number
+          precio_menu_cents: number
+          profile_id: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          notas?: string | null
+          precio_medio_menu_cents?: number
+          precio_menu_cents?: number
+          profile_id: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          notas?: string | null
+          precio_medio_menu_cents?: number
+          precio_menu_cents?: number
+          profile_id?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_prices_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_allergies: {
+        Row: {
+          alergenos: string[]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          alergenos?: string[]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          alergenos?: string[]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_allergies_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_users: {
+        Row: {
+          created_at: string
+          first_name: string
+          id: string
+          is_active: boolean
+          last_name_1: string
+          last_name_2: string | null
+          profile_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          first_name: string
+          id?: string
+          is_active?: boolean
+          last_name_1: string
+          last_name_2?: string | null
+          profile_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          first_name?: string
+          id?: string
+          is_active?: boolean
+          last_name_1?: string
+          last_name_2?: string | null
+          profile_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_users_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_users_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       facturacion_config: {
         Row: { id: number; iva_rate_bps: number }
         Insert: { id?: number; iva_rate_bps?: number }
@@ -510,6 +622,7 @@ export type MenuSemanal = Tables<"menus_semanales">
 export type MenuItem = Tables<"menu_items">
 export type Pedido = Tables<"pedidos">
 export type PedidoItem = Tables<"pedido_items">
+export type CompanyUser = Tables<"company_users">
 export type Factura = Tables<"facturas">
 export type FacturaLinea = Tables<"factura_lineas">
 export type FacturacionConfig = Tables<"facturacion_config">
@@ -521,3 +634,5 @@ export type MetodoPago = Enums<"metodo_pago">
 export type Rol = Enums<"app_role">
 export type EstadoFactura = Enums<"factura_estado">
 export type TipoLineaFactura = Enums<"factura_linea_tipo">
+export type UserAllergy = Tables<"user_allergies">
+export type CompanyPrice = Tables<"company_prices">

@@ -4,9 +4,9 @@ import { useActionState } from "react"
 import { Field, SelectField, TextareaField } from "@/components/ui/field"
 import { Card } from "@/components/ui/misc"
 import { BotonGuardar, Mensajes } from "@/components/ui/formulario"
-import { guardarDatosFiscales, guardarPerfil } from "@/lib/actions/perfil"
+import { guardarAlergias, guardarDatosFiscales, guardarPerfil } from "@/lib/actions/perfil"
 import { cambiarPassword, type EstadoFormulario } from "@/lib/actions/auth"
-import { METODOS_PAGO } from "@/lib/constants"
+import { ALERGENOS, METODOS_PAGO } from "@/lib/constants"
 import type { Perfil } from "@/lib/database.types"
 
 const ESTADO_INICIAL: EstadoFormulario = {}
@@ -174,6 +174,52 @@ export function FormularioFiscal({ perfil }: { perfil: Perfil }) {
 
         <div className="pt-1">
           <BotonGuardar>Guardar datos fiscales</BotonGuardar>
+        </div>
+      </form>
+    </Card>
+  )
+}
+
+export function FormularioAlergias({ alergenos }: { alergenos: string[] }) {
+  const [estado, accion] = useActionState(guardarAlergias, ESTADO_INICIAL)
+
+  return (
+    <Card className="p-6">
+      <h2 className="font-display text-xl">Alergias e intolerancias</h2>
+      <p className="mt-1.5 text-sm text-muted-foreground">
+        Selecciona los alimentos a los que eres alérgico o intolerante. Se lo
+        comunicaremos a cocina para que lo tenga en cuenta.
+      </p>
+
+      <form action={accion} className="mt-6" noValidate>
+        <Mensajes estado={estado} />
+
+        <fieldset className="mt-2">
+          <legend className="sr-only">Alergenos</legend>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {ALERGENOS.map((alergeno) => {
+              const marcado = alergenos.includes(alergeno)
+              return (
+                <label
+                  key={alergeno}
+                  className="flex items-center gap-2.5 cursor-pointer group"
+                >
+                  <input
+                    type="checkbox"
+                    name="alergenos"
+                    value={alergeno}
+                    defaultChecked={marcado}
+                    className="w-4 h-4 rounded border-border accent-primary cursor-pointer"
+                  />
+                  <span className="text-sm capitalize">{alergeno}</span>
+                </label>
+              )
+            })}
+          </div>
+        </fieldset>
+
+        <div className="pt-5">
+          <BotonGuardar>Guardar alergias</BotonGuardar>
         </div>
       </form>
     </Card>

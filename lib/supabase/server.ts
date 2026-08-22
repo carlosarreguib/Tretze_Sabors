@@ -1,6 +1,6 @@
 import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
-import type { Database } from "@/lib/database.types"
+import type { CompanyUser, Database } from "@/lib/database.types"
 
 /**
  * Cliente de Supabase para Server Components, Server Actions y Route Handlers.
@@ -53,19 +53,67 @@ export async function getUsuario() {
   return { id: data.claims.sub as string, email: data.claims.email as string | undefined }
 }
 
-/** Perfil completo del usuario autenticado, o null si no hay sesion. */
+/**
+ * Perfil completo del usuario autenticado, o null si no hay sesion.
+ *
+ * Resolucion en dos pasos para soportar tanto el modelo antiguo (un auth.user
+ * = un profile de empresa) como el nuevo (usuario individual en company_users
+ * que apunta al profile de su empresa):
+ *
+ *  1. Si auth.uid() coincide con un profiles.id → retorna ese profile directamente
+ *     (admins y empresas creadas antes del nuevo modelo).
+ *  2. Si no, busca en company_users y retorna el profile de la empresa.
+ *
+ * Con esto, todo el resto del codigo (pedidos, facturacion, panel) sigue
+ * usando perfil.id como el profile_id de la empresa sin cambios.
+ */
 export async function getPerfil() {
   const usuario = await getUsuario()
   if (!usuario) return null
 
   const supabase = await createClient()
-  const { data } = await supabase
+
+  const { data: perfilDirecto } = await supabase
     .from("profiles")
     .select("*")
     .eq("id", usuario.id)
-    .single()
+    .maybeSingle()
 
-  return data
+  if (perfilDirecto) return perfilDirecto
+
+  const { data: cu } = await supabase
+    .from("company_users")
+    .select("profile_id")
+    .eq("user_id", usuario.id)
+    .maybeSingle()
+
+  if (!cu) return null
+
+  const { data: perfilEmpresa } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", cu.profile_id)
+    .maybeSingle()
+
+  return perfilEmpresa ?? null
+}
+
+/**
+ * Datos del usuario individual (company_users) del usuario autenticado,
+ * o null si es un admin o un perfil de empresa directo (sin company_users).
+ */
+export async function getCompanyUser(): Promise<CompanyUser | null> {
+  const usuario = await getUsuario()
+  if (!usuario) return null
+
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from("company_users")
+    .select("*")
+    .eq("user_id", usuario.id)
+    .maybeSingle()
+
+  return data ?? null
 }
 
 /**
