@@ -277,7 +277,7 @@ export function PedidoSemanal({
           <Lock className="w-4 h-4 mt-0.5 shrink-0" aria-hidden="true" />
           <span>
             El plazo para pedir el {nombreDia(diaActivo).toLowerCase()} ya se ha
-            cerrado. Los pedidos se cierran a las 10:00 del día anterior.{" "}
+            cerrado. Los pedidos se cierran a las 17:00 del día anterior.{" "}
             <a
               href="tel:+34667518857"
               className="underline hover:text-foreground cursor-pointer"
