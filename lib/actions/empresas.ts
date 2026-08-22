@@ -145,7 +145,7 @@ export async function crearEmpresaConUsuario(
   const { data: inviteData, error: inviteError } = await admin.auth.admin.inviteUserByEmail(
     u.email,
     {
-      redirectTo: `${base}/auth/callback?next=/panel`,
+      redirectTo: `${base}/auth/callback?next=/bienvenida`,
       data: {
         skip_profile_creation: false,
         company_name: e.company_name,
@@ -223,7 +223,7 @@ export async function crearUsuarioEmpresa(
   const { data: inviteData, error: inviteError } = await admin.auth.admin.inviteUserByEmail(
     validado.data.email,
     {
-      redirectTo: `${base}/auth/callback?next=/panel`,
+      redirectTo: `${base}/auth/callback?next=/bienvenida`,
       data: { skip_profile_creation: true },
     },
   )
